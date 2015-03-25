@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/johnnye/replicator.svg?branch=master)](https://travis-ci.org/johnnye/replicator)
+
 Replicator
 =========
 
@@ -11,8 +13,8 @@ You might wat to send real traffic to a staging environment or a beta version al
 Replicator expects 3 arguments: 
 
 * `newURL` this is the new base URL to send traffic to 
-* `meh` meh mode is set to `true` by default, it doesnt make sure that these requests are sent. `false` will guarantee that requests are replaicted. 
-* `percentage` integer from 0 to 100 the percentage of requsts that are sent
+* `meh` meh mode is set to `true` by default, it doesn't make sure that these requests are sent. `false` will guarantee that requests are replicated.
+* `percentage` integer from 0 to 100 the percentage of requests that are sent
 
 ## Running
 Include it in your list of middleware, preferably near the top.
