@@ -34,4 +34,5 @@ func TestPassive(t *testing.T) {
 
 	s.ServeHTTP(res, req, testHandler)
 
+    assert.Equal(t, res.Code, 200)
 }
