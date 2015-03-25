@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Replicator struct {
@@ -13,20 +14,15 @@ type Replicator struct {
 }
 
 func NewReplicator(newURL string, meh bool, pcnt int) *Replicator {
-	if meh == nil {
-		meh = true
-	}
+	// Set some default parameters
+	rand.Seed(time.Now().UTC().UnixNano())
 
-	if pcnt == nil {
-		pcnt = 100
-	}
-
-	return &Replicator(newURL, meh, pcnt)
+	return &Replicator{newURL, meh, pcnt}
 }
 
 func (r *Replicator) ServeHTTP(w http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
-	rand.Seed("seed")
-	random := randInt(0, 100)
+
+	random := rand.Intn(r.percentage)
 
 	//If this request is not below our percentage move along
 	if random >= r.percentage {
@@ -42,8 +38,8 @@ func (r *Replicator) ServeHTTP(w http.ResponseWriter, req *http.Request, next ht
 	next(w, req)
 }
 
-func passiveMode(req *http.Request, r Replicator) {
-	url := strings.Join([]strings{r.newURL, req.URL}, "")
+func passiveMode(req *http.Request, r *Replicator) {
+	url := strings.Join([]string{r.newURL, req.URL.String()}, "")
 	req.RequestURI = url
 	client := http.Client{}
 
@@ -51,9 +47,9 @@ func passiveMode(req *http.Request, r Replicator) {
 
 }
 
-func locking(req *http.Request, r Replicator) {
+func locking(req *http.Request, r *Replicator) {
 	done := make(chan bool)
-	url := strings.Join([]strings{r.newURL, req.URL}, "")
+	url := strings.Join([]string{r.newURL, req.URL.String()}, "")
 	req.RequestURI = url
 	client := http.Client{}
 
