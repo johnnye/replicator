@@ -26,12 +26,12 @@ func TestEnforced(t *testing.T) {
 }
 
 func TestPassive(t *testing.T) {
-    s := NewReplicator("127.0.0.1", true, 10)
+	s := NewReplicator("127.0.0.1", true, 10)
 
-    res := httptest.NewRecorder()
+	res := httptest.NewRecorder()
 
-    req, _ := http.NewRequest("POST", "http://example.com", nil)
+	req, _ := http.NewRequest("POST", "http://example.com", nil)
 
-    s.ServeHTTP(res, req, testHandler)
+	s.ServeHTTP(res, req, testHandler)
 
 }
