@@ -3,6 +3,7 @@ package replicator
 import (
 	"math/rand"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -29,6 +30,10 @@ func (r *Replicator) ServeHTTP(w http.ResponseWriter, req *http.Request, next ht
 		next(w, req)
 	}
 
+	newUrl := strings.Join([]string{r.newURL, req.URL.String()}, "")
+	req.URL, _ = url.Parse(newUrl)
+	req.RequestURI = ""
+
 	if r.meh == true {
 		passiveMode(req, r)
 	} else {
@@ -39,24 +44,18 @@ func (r *Replicator) ServeHTTP(w http.ResponseWriter, req *http.Request, next ht
 }
 
 func passiveMode(req *http.Request, r *Replicator) {
-	url := strings.Join([]string{r.newURL, req.URL.String()}, "")
-	req.RequestURI = url
-	client := http.Client{}
-
-	go client.Do(req)
-
+	c := http.Client{}
+ 	go c.Do(req)
 }
 
 func locking(req *http.Request, r *Replicator) {
 	done := make(chan bool)
-	url := strings.Join([]string{r.newURL, req.URL.String()}, "")
-	req.RequestURI = url
 	client := http.Client{}
 
 	go func() {
 		client.Do(req)
+
 		done <- true
 	}()
-
 	<-done
 }
